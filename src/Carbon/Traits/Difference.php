@@ -191,11 +191,16 @@ trait Difference
         $date = $this->resolveCarbon($date);
         $diffDays = $this->diffInDays($date) + 1;
         $week = (int)($diffDays / static::DAYS_PER_WEEK);
-        $offset = $diffDays % static::DAYS_PER_WEEK;
 
-        $dayOfWeek = $weekStartsAt <= $this->dayOfWeek ? $this->dayOfWeek : $this->dayOfWeek + 7;
+        if ($weekStartsAt > $date->dayOfWeekIso){
+            $week++;
+        }
 
-        return $week + (($dayOfWeek - $offset + 1) <= $weekStartsAt ? 2 : 1) + ($offset === 0 && $this->dayOfWeek === ($weekStartsAt + 6) % 7 ? -1 : 0);
+        if ($this->dayOfWeekIso >= $weekStartsAt){
+            $week++;
+        }
+
+        return $week;
     }
     /**
      * Get the difference in days
